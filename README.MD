@@ -34,20 +34,21 @@ Sample textMapper function
 	>     return null;        
 	> }
 
-### Declare an Index Array for any Property you want to generate an Index 
+### Declare an Index Array to make a Property searchable   
 
 	> var indexOn = [
 	>     {
 	>         index: 'lastname',
 	>         textMapper: upperCaseFN
+	>         // maps the value of 'lastname' into uppercase, because firebase Priority is case-sensitiv
 	>     },
 	>     {
-	>         index: 'adresse/Strasse',     // you can nest your index
+	>         index: 'adress/street',     // you can nest your index
 	>         // no mapping wanted
 	>     }
 	> ]; 
 
-converts your value of 'lastname' into uppercase/ lowercase/ or any searchable and sortable term 
+ 
 
 
 ### Reference to your Data Firebase
@@ -69,7 +70,9 @@ Set an Index-Reference as child of your Data-Reference is not allowed)
 
 ### That's it! 
 
-Every access (set, update, remove) to your Firebase refData will update your Index. Try to add your sample Person to your Firebase refData
+Every set, update or remove on your Firebase refData will update your Index. 
+
+Try to add your 'Sample Person' to your Firebase refData
 
 
 
@@ -93,7 +96,7 @@ Searching:
 	>     })
      
 	
-Search Functions, return a Promise
+Quering Functions, return always a Promise
 
 	> queryFromTo(index, startAt, endAt, sort ).then(...);
 	> queryStartAt(index, startAt, limit, sort).then(...); 
