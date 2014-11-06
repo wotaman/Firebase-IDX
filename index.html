@@ -1,0 +1,34 @@
+<!doctype html >
+
+<html lang="en" >
+
+<head>
+
+    <meta charset="utf-8">
+    
+    <!-- Angular + Bootstrap -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.0/angular.min.js"></script>
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>       
+    <!-- FirebaseIndex Module -->
+    <script src="/firebaseindex.js"></script>
+    <!-- Angular App -->
+    <script src="/app.js"></script>
+    
+</head>
+
+<body ng-app="firebaseIDXDemo" ng-controller="appCtrl">
+    
+    <input ng-model="person.lastname" ng-change="queryLastname(person.lastname)" type="text" placeholder="lastname">
+    <input ng-model="person.adress.street" ng-change="queryStreetOfAdress(person.adress.street)" type="text" placeholder="street of adress">
+    
+    <button ng-click="generatePersons()">Generate Persons</button>
+    <button ng-click="recreateIDX()">Recreate IDX</button>
+    
+    <ul>
+        <li ng-repeat="p in persons">{{p}}</li>
+    </ul>
+    
+</body>
+
+</html>
