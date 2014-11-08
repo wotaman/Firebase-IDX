@@ -19,11 +19,19 @@
 
 <body ng-app="firebaseIDXDemo" ng-controller="appCtrl">
     
-    <input ng-model="person.lastname" ng-change="queryLastname(person.lastname)" type="text" placeholder="lastname">
-    <input ng-model="person.adress.street" ng-change="queryStreetOfAdress(person.adress.street)" type="text" placeholder="street of adress">
+    <select ng-model="index" ng-options="idx.index for idx in indexOn"></select>
+    <input ng-model="sortup" ng-init="sortup=true" ng-change="query(term, index, sortup)" type="checkbox" >SortUp
+    <input ng-model="term" ng-change="query(term, index, sortup)" type="text" placeholder="Search">
     
-    <button ng-click="generatePersons()">Generate Persons</button>
-    <button ng-click="recreateIDX()">Recreate IDX</button>
+    <button ng-click="generatePersons()">Generate 10 Persons</button>
+    <button ng-click="onIDX()">IDX On</button>
+    <button ng-click="offIDX()">IDX Off</button>
+    <button ng-click="recreateIDX()">IDX Recreate</button>
+    <button ng-click="deleteIDX()">IDX Delete</button>
+    
+    <p>
+    Use Vulcan available for Chrome to watch your Data in Firebase 
+    </p>
     
     <ul>
         <li ng-repeat="p in persons">{{p}}</li>
