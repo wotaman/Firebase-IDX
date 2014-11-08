@@ -10,67 +10,116 @@ This is a 'quick and dirty' prototype, which should help to explore the opportun
 
 ### Sample Person Object
     
-	> var person = {
-	>         lastname: "Smith",
-	>         firstname: "Frank"
-	>         email: "frank.smith@fb.com",
-	>         telefon:"12345-887766",
-	>         adress: {
-	>             street: 'Darlington Road 12',
-	>             location: 'Seattle',
-	>             state: 'US'
-	>         }
-	>     };
+	var person={
+        lastname: "Smith",
+        firstname: "Frank"
+        email: "frank.smith@fb.com",
+        telefon:"12345-887766",
+        adress: {
+            street: 'Arlington Road 12',
+            location: 'Seattle',
+            state: 'US'
+        }
+    };
 
 
-### Declare a TextMapper Function
+### Declare a Textmapper Function
+Converts your indexed Term into an uppercase/ lowercase/ or any searchable and sortable mappedTerm. This mappedTerm will become a priority in your dataset. For Details to Priority (https://www.firebase.com/docs/web/api/firebase/setpriority.html) 
 
-	> Function TextMapper(term) {... modify your term...;  return modifiedTerm;} 
+mappedTerm = textMapperFN(Term, textMapperArguments) 
 
-Sample textMapper function 
+finally your dataset will looks like:
+mappedTerm -> Priority 
+FirebaseKey -> Name
+Term -> Value
+	
+> Function(term, textMapperArguments) {
+> 
+> ... modify your term...;  
+> 
+> return mappedTerm;
+> 
+> }
 
-	> function upperCaseFN(term) {
-	>     if(typeof term === 'string') return term.toUpperCase();
-	>     return null;        
-	> }
+Sample textMapper Function 
 
-### Declare an Index Array to make a Property searchable   
+	function upperCaseFN(term, textMapperArguments) {
 
-	> var indexOn = [
-	>     {
-	>         index: 'lastname',
-	>         textMapper: upperCaseFN
-	>         // maps the value of 'lastname' into uppercase, because firebase Priority is case-sensitiv
-	>     },
-	>     {
-	>         index: 'adress/street',     // you can nest your index
-	>         // no mapping wanted
-	>     }
-	> ]; 
+        if(typeof term === 'object') return term[textMapperArguments];
+        
+		if(typeof term === 'string') return term.toUpperCase();
+        
+		//... convert your term in a priority you need for searching 
+        
+        return null;        
+    }
 
+### Declare an Index Array 
+Declare your Index Array for all the Properties of your Data, these Properties will be automatically indexed and you can query them
+
+	var indexOn = [
+	    {
+	        index: 'lastname',
+	        textMapperFN: upperCaseFN,      // converts your indexed into an uppercase mappedTerm 
+	   	},
+	    {
+	        index: 'firstname',
+	        textMapperFN: upperCaseFN         // search will be not case sensitiv
+	    },
+	    {
+	        index: 'adress',
+	        textMapperFN: upperCaseFN      // mappedTerm = textMapperFN(term, textMapperArguments)
+	        textMapperArguments: 'street'
+	    },
+	    {
+	        index: 'adress/street',
+	        textMapperFN: null                // no mapping wanted 
+	    }
+	]; 
  
 
 
-### Reference to your Data Firebase
+### Reference your Data for indexing on Firebase
 
 
-	> var refData = new Firebase(https://YourFirebaseAccount.firebaseio.com/persons");     
+	var refData = new Firebase("https://YourFirebaseAccount.firebaseio.com/persons");     
 
-### Reference to your Index Firebase 
+### Reference your Index on Firebase 
 
-Set an Index-Reference as child of your Data-Reference is not allowed)
+Set an Index-Reference as child of your Data-Reference is not allowed. But your Index can well be referenced to another Firebase Account
 
 
-	> var refIndex = new Firebase(https://YourFirebaseAccount.firebaseio.com/IDX");        
+	var refIndex = new Firebase("https://YourFirebaseAccount.firebaseio.com/IDX");        
+
+### Create an IndexObject 
+
+	var FirebaseIdx=firebaseIndex(refPersons, indexOn, refIndex)
+
+ 	//	or
+
+	var FirebaseIdx=firebaseIndex(refData, indexOn); // take Default refIDX
+
+    //	or
+
+	var FirebaseIdx=new firebaseIndex(refData, indexOn [,refIDX]);
+    
 
 ### Activate Indexing 
+Use your Index-Object 'FirebaseIdx' 
 
+FirebaseIdx.indexOn()          - start Indexing   
 
-	> firebaseIndex.indexOn(refPersons, indexOn, refIndex)
+FirebaseIdx.indexOff()         - stop Indexing
+
+FirebaseIdx.indexRecreate()    - if your Index is corrupt or not updated then recreate your Index 
+
+FirebaseIdx.indexDelete()      - delete the Index
+
+	FirebaseIdx.indexOn()
 
 ### That's it! 
 
-Every set, update or remove on your Firebase refData will update your Index. 
+Every Access (Set, Update, Remove) to your Firebase 'refPersons' will automatically update your Index. 
 
 Try to add your 'Sample Person' to your Firebase refData
 
@@ -80,30 +129,50 @@ Try to add your 'Sample Person' to your Firebase refData
 
   
 
-Searching:
+### Try Searching:
 
-	> var sortUp=true;
-	> var valueFrom="S";
-	> var valueTo="S"+'\uFFFF';
-	> var index=indexOn[0];  // { index: 'lastname', textMapper: upperCaseFN }  
-	> 
-	> 
-	> // queryFromTo() return a Promise
-	>  
-	> firebaseIndex.queryFromTo( index, valueFrom, valueTo, sortUp)
-	>     .then(function(result){         
-	>         ...use result...       
-	>     })
+	var sortUp=true;
+	var valueFrom="S";
+	var valueTo=valueFrom +'\uFFFF';
+	var index=indexOn[0];  // { index: 'lastname', textMapper: upperCaseFN }  
+	 
+	//queryFromTo() return a Promise
+  
+	FirebaseIdx.queryFromTo( index, valueFrom, valueTo, sortUp)
+	.then(function(result){         
+	         ...use result...       
+	})
      
 	
-Quering Functions, return always a Promise
+Quering Functions, return always a Promise. Try also
 
-	> queryFromTo(index, startAt, endAt, sort ).then(...);
-	> queryStartAt(index, startAt, limit, sort).then(...); 
-	> queryEndAt(index, endAt, limit, sort).then(...); 
-	> queryFirst(index, endAt).then(...) ;
-	> queryLast(index, endAt).then(...);
+> FirebaseIdx.queryFromTo(index, startAt, endAt, sort ).then(...);
+> 
+> FirebaseIdx.queryStartAt(index, startAt, limit, sort).then(...); 
+> 
+> FirebaseIdx.queryEndAt(index, endAt, limit, sort).then(...); 
+> 
+> FirebaseIdx.queryFirst(index, endAt).then(...) ;
+> 
+> FirebaseIdx.queryLast(index, endAt).then(...);
 
-ReBuild the Index
+### Using the Index
 
-	> indexRecreate();
+Methods of Index Object for handling Index 
+
+.indexOn()             - start Indexing
+
+	FirebaseIdx.indexOn()    
+
+.indexOff()         	- stop Indexing
+
+	FirebaseIdx.indexOff()
+
+.indexRecreate()    	- if your Index is corrupt, inconsistent or deleted then recreate your Index 
+
+	FirebaseIdx.indexRecreate()
+
+.indexDelete()      	- delete all Index Data
+
+	> FirebaseIdx.indexDelete();
+
