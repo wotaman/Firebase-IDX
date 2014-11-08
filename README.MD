@@ -1,12 +1,15 @@
-# Firebase Index - an AngularJs Modul #
+## Firebase-IDX 
+
+###An AngularJs Modul for auto-indexing your Firebase. 
+
+###Search for any indexed Property of your Objects stored in Firebase
+  
 
 
-### Search and sortable Indices (Priorities) in your Firebase DB
+This is a 'quick and dirty' rapid prototyp, which should help to explore the opportunities of Firebase. A Database-Concept which is wonderful - Thanks to the Firebase Developer! 
+
+
 ----------
-
-
-This is a 'quick and dirty' prototype, which should help to explore the opportunities of Firebase. 
-
 
 ### Sample Person Object
     
