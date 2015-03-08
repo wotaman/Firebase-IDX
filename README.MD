@@ -1,9 +1,19 @@
-## Firebase-IDX 
 
-###An AngularJs Modul for auto-indexing your Firebase. 
+---
 
-###Search for any indexed Property of your Objects stored in Firebase
+###This Project is DEPRECATED! ->  follow new project 'Firebase-IndexView'
+
+
+---
+
+### Firebase-IDX 
+
+####An AngularJs Modul for auto-indexing your Firebase. 
+
+####Search for any indexed Property of your Objects stored in Firebase
   
+
+
 
 
 This is a 'quick and dirty' rapid prototyp, which should help to explore the opportunities of Firebase. A Database-Concept which is wonderful - Thanks to the Firebase Developer! 
